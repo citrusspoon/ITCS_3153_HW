@@ -1,15 +1,13 @@
-/*Scott Schreiber
- *ITCS 3153 Assignment 1 - Eight Queens
+/*
+ * Scott Schreiber
+ * ITCS 3153
+ * Assignment #1 - Eight Queens
  * 
- * 
- * 
- * 
+ * Notes: The heuristic used here is the number of queens in conflict. The goal state is therefore 0, and the worst configuration will yield 8.
  * 
  * */
 
 import java.util.Random;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Queens {
 
@@ -23,21 +21,10 @@ public class Queens {
 
 	public static void main(String[] args) {
 
-		int[][] temp;
-
 		// sets initial state
 		restart();
 		currentH = calcH(board);
 		printBoard();
-		/*
-		temp = getNewConfig();
-		
-		for(int a = 0; a < 8; a++)
-			for(int b = 0; b < 8; b++)
-				board[a][b] = temp[a][b];
-		
-		currentH = calcH(board);
-		printBoard();*/
 
 		while (currentH > 0) {
 
@@ -46,7 +33,6 @@ public class Queens {
 			board = getNewConfig().clone();
 			if(restartRequired) 
 				restart();
-			
 
 		}
 		System.out.print("State changes: " + stateChangeCount + "\nRestarts: " + restartCount);
@@ -61,9 +47,7 @@ public class Queens {
 		for(int a = 0; a < 8; a++)
 			for(int b = 0; b < 8; b++)
 				currentConfig[a][b] = board[a][b];
-		
-		//printBoard(currentConfig);
-		
+
 		int lowestH = currentH;
 		int currentH = 8;
 
@@ -74,34 +58,27 @@ public class Queens {
 				// clears column of queens
 				for (int r = 0; r < board.length; r++)
 					currentConfig[r][j] = 0;
-				
-				//printBoard(currentConfig);
 
+				//sets queen in current location
 				currentConfig[i][j] = 1;
+				//checks heuristic value
 				currentH = calcH(currentConfig);
-				//printBoard(currentConfig);
+
+				//checks current h against lowest one found so far
 				if (currentH < lowestH) {
 					
 					for(int a = 0; a < 8; a++)
 						for(int b = 0; b < 8; b++)
 							finalConfig[a][b] = currentConfig[a][b];
-					
-					
-					//finalConfig = currentConfig.clone();
+
 					betterStateCount++;
 				}
 
 			}
-			//System.out.println("Next col");
 
 			for(int ii = 0; ii < board.length; ii++)
 				for(int jj = 0; jj < board.length; jj++)
 					currentConfig[ii][jj] = board[ii][jj];
-			
-			//printBoard(currentConfig);
-			//printBoard(board);
-			
-
 		}
 
 		if (lowestH > 0) {
@@ -110,12 +87,12 @@ public class Queens {
 
 			if (betterStateCount == 0) {
 				restartRequired = true;
-				System.out.println("RESTART");
+				System.out.println("RESTART\n");
 			}
 
 			else {
 				stateChangeCount++;
-				System.out.println("Setting new current state");
+				System.out.println("Setting new current state\n");
 			}
 			betterStateCount = 0;
 		}
@@ -254,8 +231,5 @@ public class Queens {
 			r++;
 			System.out.print("\n");
 		}
-		
-
 	}
-
 }
