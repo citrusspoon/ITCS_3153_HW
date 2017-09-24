@@ -1,14 +1,22 @@
 import java.util.Random;
+import java.util.Scanner;
 
 public class Main {
 
 	public static Node[][] grid = new Node[15][15];
 	public static Random rand = new Random();
+	public static Node startNode;
+	public static Node goalNode;
 
 	public static void main(String[] args) {
 
 		generateGrid();
 		printGrid();
+		promptInput();
+		printGrid();
+		
+		
+		
 
 	}
 
@@ -69,5 +77,19 @@ public class Main {
 			System.out.print("\n");
 		}
 
+	}
+	
+	public static void promptInput() {
+		
+		Scanner input = new Scanner(System.in);
+		String start, goal;
+		
+		System.out.println("Enter start node in the format x,y: ");
+		start = input.nextLine();
+		System.out.println("Enter goal node in the format x,y: ");
+		goal = input.nextLine();
+		
+		startNode = grid[Integer.parseInt(start.substring(0, 1))][Integer.parseInt(start.substring(2))];
+		goalNode = grid[Integer.parseInt(goal.substring(0, 1))][Integer.parseInt(goal.substring(2))];		
 	}
 }
