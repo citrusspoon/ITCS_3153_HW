@@ -1,5 +1,6 @@
 import java.util.Random;
 import java.util.Scanner;
+import java.util.PriorityQueue;
 
 public class Main {
 
@@ -14,10 +15,42 @@ public class Main {
 		printGrid();
 		promptInput();
 		printGrid();
-		
+		runAStar();
 		
 		
 
+	}
+	public static void runAStar() {
+		
+		Node comparator = new Node(0,0,0);
+		PriorityQueue<Node> openList = new PriorityQueue<>(10, comparator);
+		
+		
+		
+		//add start node to open list
+		//calculate F,G,H, parent is null
+		//loop while goal is not found or openlist is not empty
+		
+		//pop off node with lowest F from open list
+		//check if it's the goal node, if yes generate path
+		//if not generate neighbors. ignore if out of bounds, unpathable, 
+		
+		
+		/*
+		Node test = new Node(0, 0, 0);
+		test.setF(10);
+		Node test2 = new Node(0, 0, 0);
+		test2.setF(20);
+		Node test3 = new Node(0, 0, 0);
+		test3.setF(5);
+		
+		openList.add(test);
+		System.out.println(openList.peek().getF());
+		openList.add(test2);
+		System.out.println(openList.peek().getF());
+		openList.add(test3);
+		System.out.println(openList.peek().getF());
+		*/
 	}
 
 	public static void generateGrid() {
@@ -89,7 +122,15 @@ public class Main {
 		System.out.println("Enter goal node in the format x,y: ");
 		goal = input.nextLine();
 		
-		startNode = grid[Integer.parseInt(start.substring(0, 1))][Integer.parseInt(start.substring(2))];
-		goalNode = grid[Integer.parseInt(goal.substring(0, 1))][Integer.parseInt(goal.substring(2))];		
+		String[] temp = start.split(",");
+		String[] temp2 = goal.split(",");
+		
+		startNode = grid[Integer.parseInt(temp[0])][Integer.parseInt(temp[1])];
+		goalNode = grid[Integer.parseInt(temp2[0])][Integer.parseInt(temp2[1])];		
 	}
+	
+	
+	
 }
+
+

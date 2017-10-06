@@ -1,4 +1,6 @@
-public class Node {
+import java.util.Comparator;
+
+public class Node implements Comparator<Node>{
 	
 	private int row, col, f, g, h, type;
 	private Node parent;
@@ -14,6 +16,9 @@ public class Node {
 	//mutator methods to set values
 	public void setF(){
 		f = g + h;
+	}
+	public void setF(int ff){
+		f = ff;
 	}
 	public void setG(int value){
 		g = value;
@@ -62,5 +67,10 @@ public class Node {
 	public String toString(){
 		return "Node: " + row + "_" + col;
 	}
+	
+	public int compare(Node a, Node b) {
+
+		return a.getF() - b.getF();
+    }
 	
 }
