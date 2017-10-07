@@ -17,9 +17,6 @@ public class Node implements Comparator<Node>{
 	public void setF(){
 		f = g + h;
 	}
-	public void setF(int ff){
-		f = ff;
-	}
 	public void setG(int value){
 		g = value;
 	}

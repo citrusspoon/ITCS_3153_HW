@@ -1,5 +1,6 @@
 import java.util.Random;
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 public class Main {
@@ -16,41 +17,119 @@ public class Main {
 		promptInput();
 		printGrid();
 		runAStar();
-		
-		
 
 	}
+
 	public static void runAStar() {
-		
-		Node comparator = new Node(0,0,0);
+
+		Node comparator = new Node(0, 0, 0);
+		Node top, bottom, left, right;
+		ArrayList<Node> closedList = new ArrayList<>();
+		ArrayList<Node> path = new ArrayList<>();
+		Node currentNode;
 		PriorityQueue<Node> openList = new PriorityQueue<>(10, comparator);
-		
-		
-		
-		//add start node to open list
-		//calculate F,G,H, parent is null
-		//loop while goal is not found or openlist is not empty
-		
-		//pop off node with lowest F from open list
-		//check if it's the goal node, if yes generate path
-		//if not generate neighbors. ignore if out of bounds, unpathable, 
-		
-		
+		boolean goalfound = false;
+
+		// calculate F,G,H, parent is null of start node
+		startNode.setParent(null);
+		startNode.setG(calcG(startNode));
+		startNode.setH(calcH(startNode));
+		startNode.setF();
+
+		// add start node to open list
+		openList.add(startNode);
+
+		// loop while goal is not found or openlist is not empty
+
+		while (!goalfound && !openList.isEmpty()) {
+			// pop off node with lowest F from open list
+			currentNode = openList.poll();
+			// check if it's the goal node, if yes generate path
+			if (currentNode.equals(goalNode)) {
+				goalfound = true;
+				// generate path
+				while (currentNode.getParent() != null) {
+					path.add(currentNode);
+					currentNode = currentNode.getParent();
+				}
+
+				System.out.println("Printing path list");
+				for (int i = path.size() - 1; i >= 0; i--) {
+					System.out.println(path.get(i));
+				}
+
+			} else {// if not generate neighbors.
+
+				// -------------Top--------------//
+
+				if (currentNode.getRow() - 1 > 0) {
+					top = grid[currentNode.getRow() - 1][currentNode.getCol()];
+					if (top.getType() != 1 && !closedList.contains(top)) {
+						top.setG(calcG(top));
+						top.setH(calcH(top));
+						top.setF();
+						top.setParent(currentNode);
+						openList.add(top);
+					}
+				}
+				// -------------Bottom--------------//
+				if (currentNode.getRow() + 1 < 14) {
+					bottom = grid[currentNode.getRow() + 1][currentNode.getCol()];
+					if (bottom.getType() != 1 && !closedList.contains(bottom)) {
+						bottom.setG(calcG(bottom));
+						bottom.setH(calcH(bottom));
+						bottom.setF();
+						bottom.setParent(currentNode);
+						openList.add(bottom);
+					}
+				}
+				// -------------Left--------------//
+				if (currentNode.getCol() - 1 > 0) {
+					left = grid[currentNode.getRow()][currentNode.getCol() - 1];
+					if (left.getType() != 1 && !closedList.contains(left)) {
+						left.setG(calcG(left));
+						left.setH(calcH(left));
+						left.setF();
+						left.setParent(currentNode);
+						openList.add(left);
+					}
+				}
+				// -------------Right--------------//
+				if (currentNode.getCol() + 1 < 14) {
+					right = grid[currentNode.getRow()][currentNode.getCol() + 1];
+					if (right.getType() != 1 && !closedList.contains(right)) {
+						right.setG(calcG(right));
+						right.setH(calcH(right));
+						right.setF();
+						right.setParent(currentNode);
+						openList.add(right);
+					}
+				}
+
+				// add current node to closed list
+				closedList.add(currentNode);
+			}
+
+		}
+
 		/*
-		Node test = new Node(0, 0, 0);
-		test.setF(10);
-		Node test2 = new Node(0, 0, 0);
-		test2.setF(20);
-		Node test3 = new Node(0, 0, 0);
-		test3.setF(5);
-		
-		openList.add(test);
-		System.out.println(openList.peek().getF());
-		openList.add(test2);
-		System.out.println(openList.peek().getF());
-		openList.add(test3);
-		System.out.println(openList.peek().getF());
-		*/
+		 * Node test = new Node(0, 0, 0); test.setF(10); Node test2 = new Node(0, 0, 0);
+		 * test2.setF(20); Node test3 = new Node(0, 0, 0); test3.setF(5);
+		 * 
+		 * openList.add(test); System.out.println(openList.peek().getF());
+		 * openList.add(test2); System.out.println(openList.peek().getF());
+		 * openList.add(test3); System.out.println(openList.peek().getF());
+		 */
+	}
+
+	public static int calcH(Node n) {
+
+		return Math.abs(n.getCol() - goalNode.getCol()) + Math.abs(n.getRow() - goalNode.getRow());
+	}
+
+	public static int calcG(Node n) {
+
+		return Math.abs(n.getCol() - startNode.getCol()) + Math.abs(n.getRow() - startNode.getRow());
 	}
 
 	public static void generateGrid() {
@@ -111,26 +190,22 @@ public class Main {
 		}
 
 	}
-	
+
 	public static void promptInput() {
-		
+
 		Scanner input = new Scanner(System.in);
 		String start, goal;
-		
+
 		System.out.println("Enter start node in the format x,y: ");
 		start = input.nextLine();
 		System.out.println("Enter goal node in the format x,y: ");
 		goal = input.nextLine();
-		
+
 		String[] temp = start.split(",");
 		String[] temp2 = goal.split(",");
-		
+
 		startNode = grid[Integer.parseInt(temp[0])][Integer.parseInt(temp[1])];
-		goalNode = grid[Integer.parseInt(temp2[0])][Integer.parseInt(temp2[1])];		
+		goalNode = grid[Integer.parseInt(temp2[0])][Integer.parseInt(temp2[1])];
 	}
-	
-	
-	
+
 }
-
-
