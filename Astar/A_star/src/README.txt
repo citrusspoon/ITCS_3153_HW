@@ -1,0 +1,1 @@
+I modified the Node class slightly to implement the Comparator inteface in order to work with Java's built in min heap (PriorityQueue), so it will only work with the Node file included in this folder.  

@@ -1,3 +1,13 @@
+/*
+   Scott Schreiber
+   ITCS 3153 HW 2 
+   sschrei1
+   
+   The heuristic used in this algorithm is based on a weight of 1 between each node, and diagonal movement is not allowed.
+
+*/
+
+
 import java.util.Random;
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -9,14 +19,19 @@ public class Main {
 	public static Random rand = new Random();
 	public static Node startNode;
 	public static Node goalNode;
-
+	public static Scanner input = new Scanner(System.in);
 	public static void main(String[] args) {
 
+		String cont = "y";
 		generateGrid();
-		printGrid();
-		promptInput();
-		printGrid();
-		runAStar();
+		while (cont.equals("y")) {
+			printGrid();
+			promptInput();
+			printGrid();
+			runAStar();
+			System.out.println("\n\nEnter y to run again, enter n to exit.");
+			cont = input.nextLine();
+		}
 
 	}
 
@@ -53,6 +68,8 @@ public class Main {
 					currentNode = currentNode.getParent();
 				}
 
+				//add start node to path
+				path.add(startNode);
 				System.out.println("Printing path list");
 				for (int i = path.size() - 1; i >= 0; i--) {
 					System.out.println(path.get(i));
@@ -112,14 +129,10 @@ public class Main {
 
 		}
 
-		/*
-		 * Node test = new Node(0, 0, 0); test.setF(10); Node test2 = new Node(0, 0, 0);
-		 * test2.setF(20); Node test3 = new Node(0, 0, 0); test3.setF(5);
-		 * 
-		 * openList.add(test); System.out.println(openList.peek().getF());
-		 * openList.add(test2); System.out.println(openList.peek().getF());
-		 * openList.add(test3); System.out.println(openList.peek().getF());
-		 */
+		if(!goalfound) {
+			System.out.println("No path found.");
+		}
+		
 	}
 
 	public static int calcH(Node n) {
@@ -193,7 +206,6 @@ public class Main {
 
 	public static void promptInput() {
 
-		Scanner input = new Scanner(System.in);
 		String start, goal;
 
 		System.out.println("Enter start node in the format x,y: ");
@@ -206,6 +218,7 @@ public class Main {
 
 		startNode = grid[Integer.parseInt(temp[0])][Integer.parseInt(temp[1])];
 		goalNode = grid[Integer.parseInt(temp2[0])][Integer.parseInt(temp2[1])];
+		//input.close();
 	}
 
 }
