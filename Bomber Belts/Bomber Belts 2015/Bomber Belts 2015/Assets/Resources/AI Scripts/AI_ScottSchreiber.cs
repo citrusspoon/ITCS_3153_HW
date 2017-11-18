@@ -23,6 +23,7 @@ public class AI_ScottSchreiber : MonoBehaviour {
 	private int targetButtonIndex;
 	private bool enRoute;
 	private int previousPosition;
+	private float previousHeuristic = 0f;
 
 	private float fullBaseBombTraversalTime = 8f;
 	private float slowestCharacterFullTraversalTime = 6f;
@@ -93,13 +94,19 @@ public class AI_ScottSchreiber : MonoBehaviour {
 		//find next target button
 		if (!enRoute) {
 
-			int furthestTargetIndex = 0;
+			int furthestTargetIndex = 3;
+			float heuristic = 0;
+
 			print ("Loop started");
 			for (int i = 0; i < mainScript.getButtonLocations ().Length; i++) {
+
+
 				
 				if (mainScript.getBeltDirections () [i] == -1) {
+					heuristic = Mathf.Abs (i - convertedCharacterPosition) + mainScript.getBombSpeeds()[i];
+					bool canMakeIt = (Mathf.Abs (mainScript.getCharacterLocation () - buttonLocations [i]) / playerSpeed) + 0.35f < mainScript.getBombDistances()[i] / mainScript.getBombSpeeds()[i];
 					//if the current belt is further than the previous furthest belt
-					if (Mathf.Abs (furthestTargetIndex - convertedCharacterPosition) < Mathf.Abs (i - convertedCharacterPosition)) {
+					if (heuristic > previousHeuristic && canMakeIt) {
 						furthestTargetIndex = i;
 					}
 				}
@@ -127,7 +134,7 @@ public class AI_ScottSchreiber : MonoBehaviour {
 		
 			
 		//push buttons on the way and at destination
-		if (convertedCharacterPosition >-1 && mainScript.getBeltDirections()[convertedCharacterPosition] <=0 && mainScript.getButtonCooldowns()[convertedCharacterPosition] <=0)
+		if (convertedCharacterPosition >-1 && mainScript.getBeltDirections()[convertedCharacterPosition] == -1 || convertedCharacterPosition == targetButtonIndex)
 			mainScript.push ();
 		//print ("pos: " + mainScript.getBombDistances()[0]);
 		//print ("b speed: " + mainScript.getBombSpeeds()[0]);
