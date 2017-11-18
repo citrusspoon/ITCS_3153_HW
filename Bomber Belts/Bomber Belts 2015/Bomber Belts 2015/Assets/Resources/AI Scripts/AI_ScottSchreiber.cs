@@ -92,13 +92,24 @@ public class AI_ScottSchreiber : MonoBehaviour {
 
 		//find next target button
 		if (!enRoute) {
+
+			int furthestTargetIndex = 0;
+			print ("Loop started");
 			for (int i = 0; i < mainScript.getButtonLocations ().Length; i++) {
-
-
+				
+				if (mainScript.getBeltDirections () [i] == -1) {
+					//if the current belt is further than the previous furthest belt
+					if (Mathf.Abs (furthestTargetIndex - convertedCharacterPosition) < Mathf.Abs (i - convertedCharacterPosition)) {
+						furthestTargetIndex = i;
+					}
+				}
 
 
 
 			}
+			targetButtonIndex = furthestTargetIndex;
+			print ("Loop ended, new target: " + furthestTargetIndex);
+			enRoute = true;
 		}
 
 
@@ -118,8 +129,8 @@ public class AI_ScottSchreiber : MonoBehaviour {
 		//push buttons on the way and at destination
 		if (convertedCharacterPosition >-1 && mainScript.getBeltDirections()[convertedCharacterPosition] <=0 && mainScript.getButtonCooldowns()[convertedCharacterPosition] <=0)
 			mainScript.push ();
-		print ("pos: " + mainScript.getBombDistances()[0]);
-		print ("b speed: " + mainScript.getBombSpeeds()[0]);
+		//print ("pos: " + mainScript.getBombDistances()[0]);
+		//print ("b speed: " + mainScript.getBombSpeeds()[0]);
 
 	
 
