@@ -21,6 +21,7 @@ public class AI_ScottSchreiber : MonoBehaviour {
 	private int intCharacterPosition;
 	private int convertedCharacterPosition;
 	private int targetButtonIndex;
+	private int previousTargetIndex;
 	private bool enRoute;
 	private int previousPosition;
 	private float previousHeuristic = 0f;
@@ -53,10 +54,15 @@ public class AI_ScottSchreiber : MonoBehaviour {
 			intButtonPositions [i] = (int)mainScript.getButtonLocations () [i];
 
 		convertedCharacterPosition = ConvertCharacterPosition ();
+		//sets the initial target for the player
+		targetButtonIndex = 3;
+		previousTargetIndex = 3;
+		/*
 		if (convertedCharacterPosition > 0)
-			targetButtonIndex = 0;
-		else
 			targetButtonIndex = 7;
+		else
+			targetButtonIndex = 0;
+		*/
 	}
 
 	// Update is called once per frame
@@ -65,8 +71,6 @@ public class AI_ScottSchreiber : MonoBehaviour {
         buttonCooldowns = mainScript.getButtonCooldowns();
         beltDirections = mainScript.getBeltDirections();
 
-
-        
         //Your AI code goes here
 
 		/*
@@ -78,49 +82,47 @@ public class AI_ScottSchreiber : MonoBehaviour {
 			Takes bomb 4 seconds to get from middle of belt to other side at base speed
 		*/
 		RunAI();
-
-
 	}
 
 	void RunAI(){
+		
 		intCharacterPosition = (int)mainScript.getCharacterLocation ();
 		convertedCharacterPosition = ConvertCharacterPosition ();
-
-
-		//iterate through buttons to find the closest bomb to me that is reachable
-		//move to that belt while pressing buttons on the way
-
-
-		//find next target button
+		//find next target button 
 		if (!enRoute) {
-
+			//the index of the next target. If no suitable target is found it will default to the center button.
 			int furthestTargetIndex = 3;
+			/*
+			 * heuristic is based on the distance of the button from the player and the speed of the bomb.
+			 * Since the player will press buttons on the way to the destination,
+			 * the ideal target is the one furthest from the player with the fastest belt speed that is still possible to reach in time.
+			*/
 			float heuristic = 0;
 
 			print ("Loop started");
 			for (int i = 0; i < mainScript.getButtonLocations ().Length; i++) {
-
-
-				
 				if (mainScript.getBeltDirections () [i] == -1) {
 					heuristic = Mathf.Abs (i - convertedCharacterPosition) + mainScript.getBombSpeeds()[i];
-					bool canMakeIt = (Mathf.Abs (mainScript.getCharacterLocation () - buttonLocations [i]) / playerSpeed) + 0.35f < mainScript.getBombDistances()[i] / mainScript.getBombSpeeds()[i];
-					//if the current belt is further than the previous furthest belt
-					if (heuristic > previousHeuristic && canMakeIt) {
+					bool reachable = (Mathf.Abs (mainScript.getCharacterLocation () - buttonLocations [i]) / playerSpeed) + 0.35f < mainScript.getBombDistances()[i] / mainScript.getBombSpeeds()[i];
+					//if the current belt is a better target than the previous, and is possible to reach in time
+					if (heuristic > previousHeuristic && reachable) {
 						furthestTargetIndex = i;
 					}
 				}
-
-
-
 			}
-			targetButtonIndex = furthestTargetIndex;
+			//Code to prevent a tug-of-war situation. If the previous target is the same as the current one, it will target one above or below
+			if(previousTargetIndex == furthestTargetIndex)
+				if(furthestTargetIndex >= 0 && furthestTargetIndex < 7) //if target is not the top button target one above current target
+					targetButtonIndex = furthestTargetIndex + 1;
+				else
+					targetButtonIndex = furthestTargetIndex - 1; //if target is top button, target one below
+			else
+				targetButtonIndex = furthestTargetIndex; //target is not the same as previous target
+			
 			print ("Loop ended, new target: " + furthestTargetIndex);
 			enRoute = true;
+			previousTargetIndex = targetButtonIndex;
 		}
-
-
-
 
 		//move to target button
 
@@ -131,22 +133,11 @@ public class AI_ScottSchreiber : MonoBehaviour {
 		else
 			enRoute = false;
 		
-		
-			
-		//push buttons on the way and at destination
+		//push buttons on the way and at destination. Will not press buttons for stationary bombs since they are not yet a danger, and speed is important.
 		if (convertedCharacterPosition >-1 && mainScript.getBeltDirections()[convertedCharacterPosition] == -1 || convertedCharacterPosition == targetButtonIndex)
 			mainScript.push ();
-		//print ("pos: " + mainScript.getBombDistances()[0]);
-		//print ("b speed: " + mainScript.getBombSpeeds()[0]);
-
-	
-
 	}
-
-	float GetBombTimeToExplode(int beltIndex){
 		
-		return 0f;
-	}
 
 	/// <summary>
 	/// Converts the character's z position into an index from 0-7 that lines up with the buttons
